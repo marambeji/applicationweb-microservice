@@ -1,0 +1,228 @@
+### ========================================
+### ÉTAPE 1 : Créer des Users dans ms-user
+### ========================================
+
+### Créer User 1
+POST http://localhost:8081/api/users
+Content-Type: application/json
+
+{
+  "nom": "mme",
+  "prenom": "ons",
+  "email": "salim@mail.com",
+  "telephone": "21256222"
+}
+
+### Créer User 2
+POST http://localhost:8081/api/users
+Content-Type: application/json
+
+{
+  "nom": "Tazi",
+  "prenom": "Sara",
+  "email": "sara@mail.com",
+  "telephone": "0698765432"
+}
+
+### Vérifier : liste de tous les users
+GET http://localhost:8081/api/users
+
+### ========================================
+### ÉTAPE 2 : Créer un Rendez-vous
+### ========================================
+
+### Créer un rendez-vous
+POST http://localhost:8085/api/rendez-vous
+Content-Type: application/json
+
+{
+  "patientNom": "maram beji",
+  "medecinNom": "Dr. Tazi",
+  "specialite": "Cardiologie",
+  "dateHeure": "2026-03-01 10:00",
+  "statut": "PREVU"
+}
+
+### Vérifier : liste des rendez-vous
+GET http://localhost:8085/api/rendez-vous
+
+### ========================================
+### ÉTAPE 3 : Scénario 1 - OpenFeign
+### ms-rendez-vous appelle ms-user via Feign
+### ========================================
+
+### Tous les users via Feign (depuis ms-rendez-vous)
+GET http://localhost:8085/api/rendez-vous/users
+
+### User par ID via Feign (depuis ms-rendez-vous)
+GET http://localhost:8085/api/rendez-vous/users/1
+
+### ========================================
+### ÉTAPE 4 : Scénario 2 - Favoris
+### Ajouter des users aux favoris d'un RDV
+
+
+### Ajouter User 1 aux favoris du RDV 1
+POST http://localhost:8085/api/rendez-vous/1/favorite-users/1
+
+### Ajouter User 2 aux favoris du RDV 1
+POST http://localhost:8085/api/rendez-vous/1/favorite-users/3
+
+### Récupérer les favoris du RDV 1 (doit retourner les 2 users)
+GET http://localhost:8085/api/rendez-vous/1/favorite-users
+
+### Tester avec un User inexistant
+POST http://localhost:8085/api/rendez-vous/1/favorite-users/999
+
+### Tester avec la Gateway (Port 8089)
+POST http://localhost:8089/api/rendez-vous/1/favorite-users/3
+
+### Tester avec la Gateway (Port 8089)
+GET http://localhost:8089/api/rendez-vous/1/favorite-users
+
+### Tester avec la Gateway (Port 8089)
+GET http://localhost:8089/api/users
+
+### ========================================
+### ÉTAPE 5 : Scénario 3 - OpenFeign
+### ms-rendez-vous appelle ms-don-de-sang
+### ========================================
+
+### 1- Créer un Don de sang directement
+POST http://localhost:8089/api/don-de-sang
+Content-Type: application/json
+
+{
+  "donneurNom": "Othman",
+  "groupeSanguin": "O+",
+  "quantiteMl": 450,
+  "dateDon": "2026-02-27"
+}
+
+### 2- Tous les dons de sang via Feign (depuis ms-rendez-vous)
+GET http://localhost:8089/api/rendez-vous/dons-de-sang
+
+### ========================================
+### ÉTAPE 6 : Scénario 4 - OpenFeign
+### ms-location-materiel appelle ms-pharmacie
+### ========================================
+
+### 1- Créer une Pharmacie directement via Gateway
+POST http://localhost:8089/api/pharmacie
+Content-Type: application/json
+
+{
+  "nom": "Pharmacie Centrale",
+  "adresse": "Avenue Habib Bourguiba",
+  "ville": "Tunis",
+  "telephone": "71000111"
+}
+
+### 2- Récupérer les pharmacies depuis ms-location-materiel via Feign
+GET http://localhost:8089/api/location-materiel/pharmacies
+
+### ========================================
+### ÉTAPE 7 : Tester RABBITMQ (LOGIQUE TP)
+### ========================================
+
+### 1- Envoyer un nouveau Job (depuis ms-don-de-sang)
+### ms-don-de-sang va l'enregistrer ET l'envoyer via RabbitMQ
+POST http://localhost:8083/jobs/send
+Content-Type: application/json
+
+{
+  "service": "Médecin de garde",
+  "description": "Poste urgent pour le service des urgences"
+}
+
+### 2- Vérifier que le Job a bien été envoyé et reçu (dans ms-user)
+### Si RabbitMQ fonctionne, le job apparaîtra dans les favoris de ms-user
+GET http://localhost:8081/api/users/favorites
+
+### 3- Tester un autre Job
+POST http://localhost:8083/jobs/send
+Content-Type: application/json
+
+{
+  "service": "Infirmier",
+  "description": "Recrutement pour le bloc opératoire"
+}
+
+### 4- Vérifier à nouveau les favoris dans ms-user
+GET http://localhost:8081/api/users/favorites
+
+### ========================================
+### ÉTAPE 9 : Tester le Serveur de Configuration
+### ========================================
+
+### 1- Message de bienvenue de ms-user
+GET http://localhost:8081/api/users/welcome
+
+### 2- Message de bienvenue de ms-don-de-sang
+GET http://localhost:8083/api/don-de-sang/welcome
+
+### 3- Message de bienvenue de ms-rendez-vous
+GET http://localhost:8085/api/rendez-vous/welcome
+
+### 4- Message de bienvenue de ms-pharmacie
+GET http://localhost:8084/api/pharmacie/welcome
+
+### 5- Message de bienvenue de ms-location-materiel
+GET http://localhost:8082/api/location-materiel/welcome
+
+
+### ========================================
+### ÉTAPE 10 : Tester le rafraîchissement dynamique (Actuator)
+### ========================================
+
+### 1- Rafraîchir la config de ms-user (après avoir modifié ms-user.properties)
+POST http://localhost:8081/actuator/refresh
+
+### 1- Modifier l'utilisateur 1 (ms-user)
+PUT http://localhost:8081/api/users/1
+Content-Type: application/json
+
+{
+  "nom": "Salim",
+  "prenom": "Ahmed (Modifié)",
+  "email": "salim.new@mail.com",
+  "telephone": "11111111"
+}
+
+### 2- Supprimer l'utilisateur 2 (ms-user)
+DELETE http://localhost:8081/api/users/2
+
+
+### 3- Modifier une pharmacie (ms-pharmacie)
+PUT http://localhost:8089/api/pharmacie/1
+Content-Type: application/json
+
+{
+  "nom": "Pharmacie de Nuit (Modifiée)",
+  "adresse": "Centre Ville",
+  "ville": "Tunis",
+  "telephone": "99887766"
+}
+
+### 4- Supprimer un matériel (ms-location-materiel)
+DELETE http://localhost:8089/api/location-materiel/1
+
+
+### 5- Créer une réclamation (ms-reclamation via Gateway)
+POST http://localhost:8089/api/reclamations
+Content-Type: application/json
+
+{
+  "userId": "1",
+  "sujet": "Retard de livraison",
+  "description": "Le fauteuil roulant n'est pas encore arrivé."
+}
+
+### 6- Modifier la réclamation (ms-reclamation passez l'id généré)
+### Remplacez l'ID ci-dessous par celui obtenu juste au-dessus
+PUT http://localhost:8089/api/reclamations/65f0e1a123bc45de6789abcd
+Content-Type: application/json
+
+{
+  "statut": "EN_COURS"
+}

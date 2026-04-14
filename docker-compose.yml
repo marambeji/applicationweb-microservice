@@ -1,0 +1,142 @@
+services:
+  eureka-server:
+    build: ./eureka-server
+    ports:
+      - "8761:8761"
+
+  ms-config:
+    build: ./ms-config
+    ports:
+      - "8888:8888"
+    depends_on:
+      - eureka-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+  ms-gateway:
+    build: ./ms-gateway
+    ports:
+      - "8089:8089"
+    depends_on:
+      - eureka-server
+      - ms-config
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://ms-config:8888/
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://localhost:8088/realms/MedicalSync
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI=http://keycloak:8080/realms/MedicalSync/protocol/openid-connect/certs
+
+
+  ms-user:
+    build: ./ms-user
+    depends_on:
+      - eureka-server
+      - ms-config
+      - rabbitmq
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://ms-config:8888/
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://localhost:8088/realms/MedicalSync
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI=http://keycloak:8080/realms/MedicalSync/protocol/openid-connect/certs
+
+  ms-location-materiel:
+    build: ./ms-location-materiel
+    depends_on:
+      - eureka-server
+      - ms-config
+      - mysql-db
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://ms-config:8888/
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/locationdb?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://localhost:8088/realms/MedicalSync
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI=http://keycloak:8080/realms/MedicalSync/protocol/openid-connect/certs
+
+
+  ms-pharmacie:
+    build: ./ms-pharmacie
+    depends_on:
+      - eureka-server
+      - ms-config
+      - mysql-db
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://ms-config:8888/
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/pharmaciedb?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://localhost:8088/realms/MedicalSync
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI=http://keycloak:8080/realms/MedicalSync/protocol/openid-connect/certs
+
+
+  ms-don-de-sang:
+    build: ./ms-don-de-sang
+    depends_on:
+      - eureka-server
+      - ms-config
+      - rabbitmq
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://ms-config:8888/
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://localhost:8088/realms/MedicalSync
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI=http://keycloak:8080/realms/MedicalSync/protocol/openid-connect/certs
+
+
+  ms-rendez-vous:
+    build: ./ms-rendez-vous
+    depends_on:
+      - eureka-server
+      - ms-config
+      - mysql-db
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://ms-config:8888/
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/rendezvousdb?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://localhost:8088/realms/MedicalSync
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI=http://keycloak:8080/realms/MedicalSync/protocol/openid-connect/certs
+
+
+  ms-reclamation:
+    build: ./ms-reclamation
+    ports:
+      - "5005:5005"
+    depends_on:
+      - eureka-server
+      - mongodb
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://ms-config:8888/
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/reclamationdb
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  mysql-db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: MedicalSync_job_db
+
+  mongodb:
+    image: mongo:latest
+
+  # Keycloak (Comme sur le schéma !)
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    command: start-dev
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HOSTNAME_STRICT: "false"
+      KC_HTTP_ENABLED: "true"
+    ports:
+      - "8088:8080"

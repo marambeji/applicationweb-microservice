@@ -1,0 +1,14 @@
+welcome.message=Welcome to Don-de-sang MS (Centralized)
+server.port=8083
+<!-- slide -->
+welcome.message=Welcome to Rendez-vous MS (Centralized)
+server.port=8085
+<!-- slide -->
+welcome.message=Welcome to Pharmacie MS (Centralized)
+server.port=8084
+<!-- slide -->
+welcome.message=Welcome to Location-materiel MS (Centralized)
+server.port=8082
+<!-- slide -->
+welcome.message=Welcome to Reclamation MS (Centralized)
+server.port=5005

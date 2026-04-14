@@ -1,0 +1,229 @@
+{
+  "info": {
+    "name": "MedicalSync - Final Validation (Gateway)",
+    "description": "Collection complète pour la validation du module Applications Web distribuées. Toutes les requêtes passent par l'API Gateway sur le port 8089.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Users (ms-user)",
+      "item": [
+        {
+          "name": "Créer User 1",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nom\": \"mme\",\n  \"prenom\": \"ons\",\n  \"email\": \"salim@mail.com\",\n  \"telephone\": \"21256222\"\n}"
+            },
+            "url": { "raw": "http://localhost:8089/api/users", "protocol": "http", "host": ["localhost"], "port": "8089", "path": ["api", "users"] }
+          }
+        },
+        {
+          "name": "Créer User 2",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nom\": \"Tazi\",\n  \"prenom\": \"Sara\",\n  \"email\": \"sara@mail.com\",\n  \"telephone\": \"0698765432\"\n}"
+            },
+            "url": { "raw": "http://localhost:8089/api/users", "protocol": "http", "host": ["localhost"], "port": "8089", "path": ["api", "users"] }
+          }
+        },
+        {
+          "name": "Lister tous les Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "http://localhost:8089/api/users", "protocol": "http", "host": ["localhost"], "port": "8089", "path": ["api", "users"] }
+          }
+        },
+        {
+          "name": "Modifier User 1",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nom\": \"Salim\",\n  \"prenom\": \"Ahmed (Modifié)\",\n  \"email\": \"salim.new@mail.com\",\n  \"telephone\": \"11111111\"\n}"
+            },
+            "url": { "raw": "http://localhost:8089/api/users/1", "protocol": "http", "host": ["localhost"], "port": "8089", "path": ["api", "users", "1"] }
+          }
+        },
+        {
+          "name": "Supprimer User 2",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "http://localhost:8089/api/users/2", "protocol": "http", "host": ["localhost"], "port": "8089", "path": ["api", "users", "2"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Rendez-vous (ms-rendez-vous)",
+      "item": [
+        {
+          "name": "Créer un Rendez-vous",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientNom\": \"maram beji\",\n  \"medecinNom\": \"Dr. Tazi\",\n  \"specialite\": \"Cardiologie\",\n  \"dateHeure\": \"2026-03-01 10:00\",\n  \"statut\": \"PREVU\"\n}"
+            },
+            "url": { "raw": "http://localhost:8089/api/rendez-vous", "protocol": "http", "host": ["localhost"], "port": "8089", "path": ["api", "rendez-vous"] }
+          }
+        },
+        {
+          "name": "Lister les Rendez-vous",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "http://localhost:8089/api/rendez-vous", "protocol": "http", "host": ["localhost"], "port": "8089", "path": ["api", "rendez-vous"] }
+          }
+        },
+        {
+          "name": "Ajouter User aux favoris du RDV",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "http://localhost:8089/api/rendez-vous/1/favorite-users/1", "protocol": "http", "host": ["localhost"], "port": "8089", "path": ["api", "rendez-vous", "1", "favorite-users", "1"] }
+          }
+        },
+        {
+          "name": "Lister les favoris d'un RDV",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "http://localhost:8089/api/rendez-vous/1/favorite-users", "protocol": "http", "host": ["localhost"], "port": "8089", "path": ["api", "rendez-vous", "1", "favorite-users"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Pharmacie (ms-pharmacie)",
+      "item": [
+        {
+          "name": "Créer une Pharmacie",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nom\": \"Pharmacie Centrale\",\n  \"adresse\": \"Avenue Habib Bourguiba\",\n  \"ville\": \"Tunis\",\n  \"telephone\": \"71000111\"\n}"
+            },
+            "url": { "raw": "http://localhost:8089/api/pharmacie", "protocol": "http", "host": ["localhost"], "port": "8089", "path": ["api", "pharmacie"] }
+          }
+        },
+        {
+          "name": "Modifier une Pharmacie",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nom\": \"Pharmacie de Nuit (Modifiée)\",\n  \"adresse\": \"Centre Ville\",\n  \"ville\": \"Tunis\",\n  \"telephone\": \"99887766\"\n}"
+            },
+            "url": { "raw": "http://localhost:8089/api/pharmacie/1", "protocol": "http", "host": ["localhost"], "port": "8089", "path": ["api", "pharmacie", "1"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Don de Sang (ms-don-de-sang)",
+      "item": [
+        {
+          "name": "Créer un Don de sang",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"donneurNom\": \"Othman\",\n  \"groupeSanguin\": \"O+\",\n  \"quantiteMl\": 450,\n  \"dateDon\": \"2026-02-27\"\n}"
+            },
+            "url": { "raw": "http://localhost:8089/api/don-de-sang", "protocol": "http", "host": ["localhost"], "port": "8089", "path": ["api", "don-de-sang"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Réclamations (ms-reclamation)",
+      "item": [
+        {
+          "name": "Créer une Réclamation",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"1\",\n  \"sujet\": \"Retard de livraison\",\n  \"description\": \"Le fauteuil roulant n'est pas encore arrivé.\"\n}"
+            },
+            "url": { "raw": "http://localhost:8089/api/reclamations", "protocol": "http", "host": ["localhost"], "port": "8089", "path": ["api", "reclamations"] }
+          }
+        },
+        {
+          "name": "Modifier une Réclamation",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"statut\": \"EN_COURS\"\n}"
+            },
+            "url": { "raw": "http://localhost:8089/api/reclamations/REMPLACER_PAR_ID", "protocol": "http", "host": ["localhost"], "port": "8089", "path": ["api", "reclamations", "REMPLACER_PAR_ID"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. OpenFeign et Inter-services via Gateway",
+      "item": [
+        {
+          "name": "Tous les users via Feign (ms-rendez-vous)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "http://localhost:8089/api/rendez-vous/users", "protocol": "http", "host": ["localhost"], "port": "8089", "path": ["api", "rendez-vous", "users"] }
+          }
+        },
+        {
+          "name": "Dons de sang via Feign (ms-rendez-vous)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "http://localhost:8089/api/rendez-vous/dons-de-sang", "protocol": "http", "host": ["localhost"], "port": "8089", "path": ["api", "rendez-vous", "dons-de-sang"] }
+          }
+        },
+        {
+          "name": "Pharmacies via Feign (ms-location-materiel)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "http://localhost:8089/api/location-materiel/pharmacies", "protocol": "http", "host": ["localhost"], "port": "8089", "path": ["api", "location-materiel", "pharmacies"] }
+          }
+        }
+      ]
+    }
+  ]
+}

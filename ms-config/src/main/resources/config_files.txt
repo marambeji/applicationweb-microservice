@@ -1,0 +1,24 @@
+# Configuration commune à tous les MS
+spring.cloud.config.enabled=true
+eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka/
+management.endpoints.web.exposure.include=refresh,health,info
+<!-- slide -->
+# Config pour ms-user
+welcome.message=Welcome to User MS (Centralized)
+server.port=8081
+<!-- slide -->
+# Config pour ms-don-de-sang
+welcome.message=Welcome to Don-de-sang MS (Centralized)
+server.port=8083
+<!-- slide -->
+# Config pour ms-rendez-vous
+welcome.message=Welcome to Rendez-vous MS (Centralized)
+server.port=8085
+<!-- slide -->
+# Config pour ms-pharmacie
+welcome.message=Welcome to Pharmacie MS (Centralized)
+server.port=8084
+<!-- slide -->
+# Config pour ms-location-materiel
+welcome.message=Welcome to Location-materiel MS (Centralized)
+server.port=8082
